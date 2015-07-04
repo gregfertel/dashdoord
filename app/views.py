@@ -1,7 +1,10 @@
-import json, os, sys, datetime
+import json, os, sys, datetime, logging
 import flask
 from app import app
 import weather, subway
+
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 
 @app.route('/')
 @app.route('/index')
