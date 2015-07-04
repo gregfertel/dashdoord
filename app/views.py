@@ -24,11 +24,11 @@ def page():
     # Get Subway Info
     subways = {"L11N":[], "L11S":[]}
     directions = {"L11N":"Manhattan", "L11S":"Rockaway Parkway"}
-    time_updated = datetime.datetime.now() - datetime.timedelta(hours=4)
+    time_updated = datetime.datetime.now()
+    display_time = time_updated - datetime.timedelta(hours=4)
     for train in subways:
         subways[train] = [int(round((x - time_updated).seconds/60.0, 0)) for x in subway.get_realtime_subway(train) if x >= time_updated]
-
     return flask.render_template("site.html", embed_src = embed_src, plot_url = plot_url, 
         graph_intensity = graph_intensity, feels_like = weather_data['current']['apparentTemperature'], 
-        time=datetime.datetime.strftime(time_updated, "%I:%M:%S %p"), 
+        time=datetime.datetime.strftime(display_time, "%I:%M:%S %p"), 
         subways = subways, directions = directions)
