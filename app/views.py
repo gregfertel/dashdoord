@@ -12,7 +12,7 @@ def page():
     address = "303 Graham Avenue, Brooklyn, NY 11211"
     (latitude, longitude) = weather.get_latitude_longitude(address)
     
-    embed_src = weather.get_forecast_embed_url("#000000", latitude, longitude, "303 Graham Avenue, Brooklyn, NY")
+    embed_src = weather.get_forecast_embed_url("", latitude, longitude, "303 Graham Avenue, Brooklyn, NY")
 
     # Update Plotly
     graph_intensity = False
