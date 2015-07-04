@@ -28,7 +28,7 @@ def get_forecast_data(latitude, longitude, key=FORECAST_API_KEY):
 bedford_blue_hex = "#4F748E"
 inverted_color = "#B08B71"
 def get_forecast_embed_url(color, latitude, longitude, name):
-    src="http://forecast.io/embed/#lat=%s&lon=%s&name=%s&color=%s" % (latitude, longitude, name, color)
+    src="https://forecast.io/embed/#lat=%s&lon=%s&name=%s&color=%s" % (latitude, longitude, name, color)
     return src
 
 def update_plot(minutely_data, filename="Rain_Intensity", key = PLOTLY_API_KEY, username = PLOTLY_USERNAME):
