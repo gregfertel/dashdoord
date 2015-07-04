@@ -1,0 +1,74 @@
+{% block content %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" src="static/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="static/jquery.2.1.4.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
+    <title>dashdoord</title>
+    <script>
+    // Refresh page every 90 seconds. Currently a hard refresh. Needs to be changed to individual elements
+    // Then subway time can be updated every 60 seconds and weather can be updated every 5 minutes or so,
+    // solving API limitation.
+    setTimeout('window.location.href=window.location.href;', 90000);
+    </script>
+    <style>*{font-family:"Helvetica";}</style>
+    <style>
+    .fe_container .fe_title .fe_location {
+      position: absolute;
+      left: 10px;
+      bottom: 6px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .fe_title {
+        position: relative;
+        height: 32px;
+        height: 32px;
+        border-bottom: 2px solid #444;
+        border-bottom-width: 2px;
+        border-bottom-style: solid;
+        border-bottom-color: rgb(68, 68, 68);
+        }
+    </style>
+</head>
+<body>
+<div class="fe_container">
+    <div class="fe_title" style="display:block;">
+        <span class="fe_location">
+            <span>
+            Graham Avenue &nbsp <img height="25" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"> &nbsp (Updated {{ time }})
+            </span>
+        </span>
+    </div>
+</div>
+<div class="center-container" id="subways">
+{% for subway in subways %}
+<div id="{{ subway }}" class="col-xs-6">
+    <table class="table table-condensed" style="width:100%; font-size:30px">
+    {% for wait in subways[subway][:4] %}
+        <tr>
+            <td><img height="40" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"></td>
+            <td>{{ directions[subway] }}</td>
+            <td>{{ wait }} Minutes</td>
+        <tr>
+    {% endfor %}
+    </table>
+</div>
+{% endfor %}
+<iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="{{ embed_src }}"></iframe> 
+{% if graph_intensity %}
+<div id="plotly">
+<iframe width="100%" height="245" frameborder="0" seamless="seamless" scrolling="no" src="{{ plot_url }}.embed?width=100%&height=245" ></iframe> 
+</div>
+{% endif %}
+</div>
+</body>
+<script type=text/javascript src="{{
+  url_for('static', filename='jquery.2.1.4.min.js') }}"></script>
+<script type=css src="{{
+  url_for('static', filename='bootstrap.min.css') }}"></script>
+</html>
+{% endblock %}
