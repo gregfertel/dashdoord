@@ -24,7 +24,7 @@ def page():
     # Get Subway Info
     subways = {"L11N":[], "L11S":[]}
     directions = {"L11N":"Manhattan", "L11S":"Rockaway Parkway"}
-    time_updated = datetime.datetime.now() + datetime.timedelta(hours=4)
+    time_updated = datetime.datetime.now() - datetime.timedelta(hours=4)
     for train in subways:
         subways[train] = [int(round((x - time_updated).seconds/60.0, 0)) for x in subway.get_realtime_subway(train) if x >= time_updated]
 
