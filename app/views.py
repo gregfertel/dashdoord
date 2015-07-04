@@ -12,7 +12,7 @@ def page():
     address = "303 Graham Avenue, Brooklyn, NY 11211"
     (latitude, longitude) = weather.get_latitude_longitude(address)
     
-    embed_src = weather.get_forecast_embed_url("#B08B71", latitude, longitude, "303 Graham Avenue, Brooklyn, NY")
+    embed_src = weather.get_forecast_embed_url("#000000", latitude, longitude, "303 Graham Avenue, Brooklyn, NY")
 
     # Update Plotly
     graph_intensity = False
@@ -24,7 +24,7 @@ def page():
     # Get Subway Info
     subways = {"L11N":[], "L11S":[]}
     directions = {"L11N":"Manhattan", "L11S":"Rockaway Parkway"}
-    time_updated = datetime.datetime.now()
+    time_updated = datetime.datetime.now() + datetime.timedelta(hours=4)
     for train in subways:
         subways[train] = [int(round((x - time_updated).seconds/60.0, 0)) for x in subway.get_realtime_subway(train) if x >= time_updated]
 
