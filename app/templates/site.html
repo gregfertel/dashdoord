@@ -8,6 +8,7 @@
     <script src="static/bootstrap.min.js"></script>
     <title>dashdoord</title>
     <script>
+    document.body.requestFullscreen();
 // Refresh page every 90 seconds. Currently a hard refresh. Needs to be changed to individual elements
 // Then subway time can be updated every 60 seconds and weather can be updated every 5 minutes or so,
 // solving API limitation.
@@ -64,6 +65,7 @@ head.appendChild(style);
     </style>
 </head>
 <body>
+<meta name="mobile-web-app-capable" content="yes">
 <div class="fe_container">
     <div class="fe_title" style="display:block;">
         <span class="fe_location">
