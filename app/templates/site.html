@@ -8,13 +8,43 @@
     <script src="static/bootstrap.min.js"></script>
     <title>dashdoord</title>
     <script>
-    // Refresh page every 90 seconds. Currently a hard refresh. Needs to be changed to individual elements
-    // Then subway time can be updated every 60 seconds and weather can be updated every 5 minutes or so,
-    // solving API limitation.
-    setTimeout('window.location.href=window.location.href;', 90000);
+// Refresh page every 90 seconds. Currently a hard refresh. Needs to be changed to individual elements
+// Then subway time can be updated every 60 seconds and weather can be updated every 5 minutes or so,
+// solving API limitation.
+setTimeout('window.location.href=window.location.href;', 90000);
+    javascript: (
+function () { 
+// the css we are going to inject
+var css = 'html {-webkit-filter: invert(100%);' +
+    '-moz-filter: invert(100%);' + 
+    '-o-filter: invert(100%);' + 
+    '-ms-filter: invert(100%); }',
+
+head = document.getElementsByTagName('head')[0],
+style = document.createElement('style');
+
+// a hack, so you can "invert back" clicking the bookmarklet again
+if (!window.counter) { window.counter = 1;} else  { window.counter ++;
+if (window.counter % 2 == 0) { var css ='html {-webkit-filter: invert(0%); -moz-filter:    invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'}
+ };
+
+style.type = 'text/css';
+if (style.styleSheet){
+style.styleSheet.cssText = css;
+} else {
+style.appendChild(document.createTextNode(css));
+}
+
+//injecting the css to the head
+head.appendChild(style);
+}());
+
     </script>
     <style>*{font-family:"Helvetica";}</style>
     <style>
+    .inverted {
+    filter: invert(100%);
+    }
     .fe_container .fe_title .fe_location {
       position: absolute;
       left: 10px;
