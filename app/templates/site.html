@@ -67,6 +67,13 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
         border-bottom-style: solid;
         border-bottom-color: rgb(68, 68, 68);
         }
+    .fe_break {
+        height: 0px;
+        border-bottom: 2px solid #444;
+        border-bottom-width: 2px;
+        border-bottom-style: solid;
+        border-bottom-color: rgb(68, 68, 68);
+        }
     </style>
 </head>
 <body>
@@ -93,13 +100,36 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
     </table>
 </div>
 {% endfor %}
+</div>
+</div>
+
+<div id="forecast_widget">
 <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="{{ embed_src }}"></iframe> 
+</div>
 {% if graph_intensity %}
 <div id="plotly">
 <iframe width="100%" height="245" frameborder="0" seamless="seamless" scrolling="no" src="{{ plot_url }}.embed?width=100%&height=245" ></iframe> 
 </div>
+{% else %}
+    <div class="fe_break" style="display:block;">
+    </div>
+<table class="table table-condensed" style="width:100%; font-size:20px">
+<tr>
+	<th>Nearby Stations &nbsp&nbsp<img height="15" src="{{ url_for('static', filename='citibike.jpg') }}" alt="Citibike Train Logo"></th>
+	<th>Bikes</th>
+	<th>Docks</th>
+	<th>Distance</th>
+</tr>
+{% for station in station_info %}
+<tr>
+	<td>{{station['stationName']}}</td>
+	<td>{{station['availableBikes']}}</td>
+	<td>{{station['availableDocks']}}</td>
+	<td>{{station['distance']}} mi</td>
+</tr>
+{% endfor %}
+</table>
 {% endif %}
-</div>
 </body>
 <script type=text/javascript src="{{
   url_for('static', filename='jquery.2.1.4.min.js') }}"></script>
