@@ -11,9 +11,53 @@
 // Refresh page every 90 seconds. Currently a hard refresh. Needs to be changed to individual elements
 // Then subway time can be updated every 60 seconds and weather can be updated every 5 minutes or so,
 // solving API limitation.
-setTimeout('window.location.href=window.location.href;', 90000);
-    javascript: (
-function () { 
+//setTimeout('window.location.href=window.location.href;', 90000);
+    //javascript: (
+
+var directions = JSON.parse('{{ directions|tojson }}')
+
+var replaceCitibike = function() {
+    $.get( "citibike", function( data ) {
+        citibikeData = JSON.parse(data)
+        var content = ''
+        for (var i = 0; i < citibikeData.length; i++) {
+            var row = citibikeData[i]
+            content += '<tr>'
+            content += '<td>' + row['stationName'] + '</td>'
+            content += '<td>' + row['availableBikes'] + '</td>'
+            content += '<td>' + row['availableDocks'] + '</td>' 
+            content += '<td>' + row['distance'] + '</td>'
+            content += '</tr>'
+        $("#citibike_body").html(content)
+    }
+    });
+}
+
+var replaceSubway = function () {
+    $.get("subway", function (data) {
+        subwayData = JSON.parse(data)
+        for (var subway in subwayData) {
+            var content = ''
+            var directionData = subwayData[subway].slice(0, 4)
+            for (var i = 0; i < directionData.length; i++) {
+                content += '<tr><td><img height="40" src="static/ltrain.png" alt="L Train Logo"></td>'
+                content += '<td>' + directions[subway] + '</td>'
+                content += '<td>' + directionData[i] + " Minutes</td></tr>"
+            }
+            $("#" + subway + "_body").html(content)
+        }
+    })
+}
+
+var updateTime = function() {
+    var time = new Date();
+    var currentTime = time.toLocaleString('en-US', 
+        { hour: 'numeric', hour12: true, 'minute': 'numeric', 'second': 'numeric' });
+    $("#current_time").html(currentTime)
+}
+
+
+var cssInject = function () { 
 // the css we are going to inject
 var css = 'html {-webkit-filter: invert(100%);' +
     '-moz-filter: invert(100%);' + 
@@ -37,7 +81,8 @@ style.appendChild(document.createTextNode(css));
 
 //injecting the css to the head
 head.appendChild(style);
-}());
+}
+//cssInject()
 function hideAddressBar(){
   if(document.documentElement.scrollHeight<window.outerHeight/window.devicePixelRatio)
     document.documentElement.style.height=(window.outerHeight/window.devicePixelRatio)+'px';
@@ -45,7 +90,26 @@ function hideAddressBar(){
 }
 window.addEventListener("load",function(){hideAddressBar();});
 window.addEventListener("orientationchange",function(){hideAddressBar();});
-    </script>
+
+// Setting Subways to update every minute
+window.setInterval(function(){
+    updateTime()
+    replaceSubway()
+}, 60000);
+
+// Setting Citibike to Update every 5 minutes
+window.setInterval(function(){
+    replaceCitibike()
+}, 300000);
+
+// Setting weather to update every 15 minutes
+window.setInterval(function(){
+    document.getElementById("forecast_embed").src += ''
+}, 900000);
+
+</script>
+
+
     <style>*{font-family:"Helvetica";}</style>
     <style>
     .inverted {
@@ -81,7 +145,7 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
     <div class="fe_title" style="display:block;">
         <span class="fe_location">
             <span>
-            Graham Avenue &nbsp <img height="25" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"> &nbsp (Updated {{ time }})
+            Graham Avenue &nbsp <img height="25" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"> &nbsp (Updated <span id=current_time>{{ time }}</span>)
             </span>
         </span>
     </div>
@@ -90,6 +154,7 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
 {% for subway in subways %}
 <div id="{{ subway }}" class="col-xs-6">
     <table class="table table-condensed" style="width:100%; font-size:30px">
+    <tbody id="{{ subway }}_body">
     {% for wait in subways[subway][:4] %}
         <tr>
             <td><img height="40" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"></td>
@@ -97,6 +162,7 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
             <td>{{ wait }} Minutes</td>
         <tr>
     {% endfor %}
+    </tbody>
     </table>
 </div>
 {% endfor %}
@@ -113,13 +179,14 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
 {% else %}
     <div class="fe_break" style="display:block;">
     </div>
-<table class="table table-condensed" style="width:100%; font-size:20px">
+<table class="table table-condensed" style="width:100%; font-size:20px" id=citibike_table>
 <tr>
 	<th>Nearby Stations &nbsp&nbsp<img height="15" src="{{ url_for('static', filename='citibike.jpg') }}" alt="Citibike Train Logo"></th>
 	<th>Bikes</th>
 	<th>Docks</th>
 	<th>Distance</th>
 </tr>
+<tbody id=citibike_body>
 {% for station in station_info %}
 <tr>
 	<td>{{station['stationName']}}</td>
@@ -128,6 +195,7 @@ window.addEventListener("orientationchange",function(){hideAddressBar();});
 	<td>{{station['distance']}} mi</td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
 {% endif %}
 </body>
