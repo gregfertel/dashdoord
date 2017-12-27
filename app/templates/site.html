@@ -16,6 +16,15 @@
 
 var directions = JSON.parse('{{ directions|tojson }}')
 
+var fillCryptos = function() {
+    $.get('crypto', function(data) {
+        cryptoData = JSON.parse(data)
+        $("#bitcoin_price").html(cryptoData['Bitcoin']['price'] + ' (' + cryptoData['Bitcoin']['change'] + '%)')
+        $("#ethereum_price").html(cryptoData['Ethereum']['price'] + ' (' + cryptoData['Ethereum']['change'] + '%)')
+    })
+}
+fillCryptos()
+
 var replaceCitibike = function() {
     $.get( "citibike", function( data ) {
         citibikeData = JSON.parse(data)
@@ -102,9 +111,10 @@ window.setInterval(function(){
     replaceCitibike()
 }, 300000);
 
-// Setting weather to update every 15 minutes
+// Setting weather and cryptos to update every 15 minutes
 window.setInterval(function(){
     document.getElementById("forecast_embed").src += ''
+    fillCryptos()
 }, 900000);
 
 </script>
@@ -171,7 +181,7 @@ window.setInterval(function(){
 
 <div id="forecast_widget">
 <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="80%" src="{{ embed_src }}"></iframe> 
-<iframe width="15%" height="245" src="https://www.youtube.com/embed/1OHEB41yRdU?rel=0&amp;showinfo=1&amp;loop=1" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen=false></iframe>
+<iframe width="15%" height="245" src="http://www.youtube.com/embed/1OHEB41yRdU?rel=0&amp;showinfo=1&amp;loop=1" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen=false></iframe>
 </div>
 {% if graph_intensity %}
 <div id="plotly">
@@ -179,7 +189,8 @@ window.setInterval(function(){
 {% else %}
     <div class="fe_break" style="display:block;">
     </div>
-<table class="table table-condensed" style="width:100%; font-size:20px" id=citibike_table>
+<div id="bottom_section">
+<table class="table table-condensed" style="width:60%; font-size:20px; float:left" id=citibike_table>
 <tr>
 	<th>Nearby Stations &nbsp&nbsp<img height="15" src="{{ url_for('static', filename='citibike.jpg') }}" alt="Citibike Train Logo"></th>
 	<th>Bikes</th>
@@ -197,6 +208,15 @@ window.setInterval(function(){
 {% endfor %}
 </tbody>
 </table>
+<span id="crypto">
+    <div><img height="100" src="{{ url_for('static', filename='bitcoin.png') }}" alt="Bitcoin Logo"> 
+        <span id="bitcoin_price" style="font-size:35px"></span>
+    </div>
+    <div><img height="100" src="{{ url_for('static', filename='ethereum.png') }}" alt="Ethereum Logo">
+        <span id="ethereum_price" style="font-size:35px"></span>
+    </div>
+</span>
+</div>
 {% endif %}
 </body>
 <script type=text/javascript src="{{

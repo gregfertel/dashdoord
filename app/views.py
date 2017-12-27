@@ -2,6 +2,7 @@ import json, os, sys, datetime, logging, time
 import flask
 from app import app
 import weather, subway, citibike
+import requests
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
@@ -9,6 +10,18 @@ app.logger.setLevel(logging.ERROR)
 ADDRESS = "303 Graham Avenue, Brooklyn, NY 11211"
 LATITUDE = 40.7131728
 LONGITUDE = -73.94442019999997
+
+@app.route('/crypto')
+def crypto_api():
+	url = 'https://api.coinmarketcap.com/v1/ticker/'
+	resp = requests.get(url)
+	data = resp.json()
+	prices = {}
+	for x in data:
+		formatted_price = '${:,.2f}'.format(float(x['price_usd']))
+		percent_change = x['percent_change_24h']
+		prices[x['name']] = {'price': formatted_price, 'change': percent_change}
+	return json.dumps(prices)
 
 @app.route('/subway')
 def subway_api():
