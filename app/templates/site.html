@@ -79,6 +79,8 @@ var updateTime = function() {
     $("#current_time").html(currentTime)
 }
 
+updateTime()
+
 
 var cssInject = function () { 
 // the css we are going to inject
@@ -196,7 +198,7 @@ window.setInterval(function(){
     <div class="fe_title" style="display:block;">
         <span class="fe_location">
             <span>
-            {{subway_station_name}} (Updated <span id=current_time>{{ time }}</span>)
+            {{subway_station_name}} (Updated <span id=current_time></span>)
             </span>
         </span>
     </div>
