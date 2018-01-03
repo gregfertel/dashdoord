@@ -96,9 +96,10 @@ def citibike_api(latitude=None, longitude=None):
 def page():
     address = flask.request.args.get('address') or flask.request.cookies.get('address')
     subway_choice = flask.request.args.get('subway') or flask.request.cookies.get('subway')
+    print address, subway_choice
     latitude = flask.request.cookies.get('latitude')
     longitude = flask.request.cookies.get('longitude')
-    if not address and not subway_choice:
+    if not address or not subway_choice:
         form = forms.MainForm(flask.request.form)
         return flask.render_template("start.html", form=form)
     elif not latitude and not longitude:
