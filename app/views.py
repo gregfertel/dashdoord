@@ -14,7 +14,8 @@ LONGITUDE = -73.94442019999997
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 json_url = os.path.join(SITE_ROOT, "static", "all_stations.json")
 
-with open(json_url) as f:
+#with open(json_url) as f:
+with app.open_resource('static/all_stations.json') as f:
     STATION_DICTS = json.loads(f.read())['result']
 STATIONS = {x['name']: x['id'][:-1] for x in STATION_DICTS}
 
