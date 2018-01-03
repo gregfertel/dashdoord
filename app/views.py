@@ -15,8 +15,12 @@ SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 json_url = os.path.join(SITE_ROOT, "static", "all_stations.json")
 
 #with open(json_url) as f:
-with app.open_resource('static/all_stations.json') as f:
-    STATION_DICTS = json.loads(f.read())['result']
+#with app.open_resource('static/all_stations.json') as f:
+    #STATION_DICTS = json.loads(f.read())['result']
+station_url = 'https://mtaapi.herokuapp.com/stations'
+STATION_DICTS = requests.get(station_url).json()['result']
+
+    
 STATIONS = {x['name']: x['id'][:-1] for x in STATION_DICTS}
 
 @app.route('/_autocomplete', methods=['GET'])

@@ -31,7 +31,6 @@ def get_realtime_subway_elixir(station_id, client_id=CLIENT_ID):
     url = "http://app-ex-mta.herokuapp.com/times/%s?client_id=%s" % (station_id, client_id)
     response = requests.get(url)
     data = response.json()
-    print data
     return json.dumps(data)
 
 
