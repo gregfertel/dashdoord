@@ -31,3 +31,4 @@ requests==2.7.0
 six==1.11.0
 tornado==4.2
 Werkzeug==0.10.4
+WTForms==2.1
