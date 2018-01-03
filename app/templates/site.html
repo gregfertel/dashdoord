@@ -4,10 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <script>
+    var directions = JSON.parse('{{ directions|tojson }}')
+    var latitude = '{{ latitude }}'
+    var longitude = '{{ longitude }}'
+    </script>
     <script src="static/jquery.2.1.4.min.js"></script>
     <script src="static/bootstrap.min.js"></script>
+    <script src="static/maindash.js"></script>
     <title>dashdoord</title>
     <script>
+    var subwayColors = {
+    'A': '#0039A6', 'C': '#0039A6', 'E': '#0039A6',
+    'B': '#FF6319', 'D': '#FF6319', 'F': '#FF6319', 'M': '#FF6319',
+    'G': '#6CBE45', 'J': '#996633', 'Z': '#996633', 'L': '#A7A9AC',
+    'N': '#FCCC0A', 'Q': '#FCCC0A', 'R': '#FCCC0A', 'S': '#808183',
+    '1': '#EE352E', '2': '#EE352E', '3': '#EE352E', 
+    '4': '#00933C', '5': '#00933C', '6': '#00933C', '7': '#B933AD'
+}
 // Refresh page every 90 seconds. Currently a hard refresh. Needs to be changed to individual elements
 // Then subway time can be updated every 60 seconds and weather can be updated every 5 minutes or so,
 // solving API limitation.
@@ -23,7 +37,7 @@ var fillCryptos = function() {
         $("#ethereum_price").html(cryptoData['Ethereum']['price'] + ' (' + cryptoData['Ethereum']['change'] + '%)')
     })
 }
-fillCryptos()
+//fillCryptos()
 
 var replaceCitibike = function() {
     $.get( "citibike", function( data ) {
@@ -43,15 +57,15 @@ var replaceCitibike = function() {
 }
 
 var replaceSubway = function () {
-    $.get("subway", function (data) {
+    $.get("subway?station_id=" + Object.keys(directions)[0].slice(0, -1) , function (data) {
         subwayData = JSON.parse(data)
         for (var subway in subwayData) {
             var content = ''
             var directionData = subwayData[subway].slice(0, 4)
             for (var i = 0; i < directionData.length; i++) {
-                content += '<tr><td><img height="40" src="static/ltrain.png" alt="L Train Logo"></td>'
-                content += '<td>' + directions[subway] + '</td>'
-                content += '<td>' + directionData[i] + " Minutes</td></tr>"
+                content += '<tr><td><div class=subway-circle style="border: 2px solid ' + subwayColors[directionData[i]['route']]+ '; background-color: ' + subwayColors[directionData[i]['route']] + ';"><span>' + directionData[i]['route'] + '</span></div></td>'
+                content += '<td>' + directionData[i]['destination'] + '</td>'
+                content += '<td>' + parseInt(directionData[i]['remaining'] / 60) + " Minutes</td></tr>"
             }
             $("#" + subway + "_body").html(content)
         }
@@ -114,7 +128,7 @@ window.setInterval(function(){
 // Setting weather and cryptos to update every 15 minutes
 window.setInterval(function(){
     document.getElementById("forecast_embed").src += ''
-    fillCryptos()
+//    fillCryptos()
 }, 900000);
 
 </script>
@@ -147,29 +161,56 @@ window.setInterval(function(){
         border-bottom-width: 2px;
         border-bottom-style: solid;
         border-bottom-color: rgb(68, 68, 68);
+
         }
+
+.subway-circle {
+    display:inline-block;
+    line-height:0px;
+    
+    border-radius:50%;
+    border:2px solid #0039A6;
+    background-color: #0039A6;
+    
+    font-size:32px;
+    font: helvetica;
+    color: white;
+}
+
+.subway-circle span {
+    display:inline-block;
+    
+    padding-top:50%;
+    padding-bottom:50%;
+    
+    margin-left:8px;
+    margin-right:8px;
+    font: helvetica;
+}
+
     </style>
+
 </head>
-<body>
+<body style="width:100%;"=>
 <div class="fe_container">
     <div class="fe_title" style="display:block;">
         <span class="fe_location">
             <span>
-            Graham Avenue &nbsp <img height="25" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"> &nbsp (Updated <span id=current_time>{{ time }}</span>)
+            {{subway_station_name}} (Updated <span id=current_time>{{ time }}</span>)
             </span>
         </span>
     </div>
 </div>
 <div class="center-container" id="subways">
-{% for subway in subways %}
+{% for subway in ['N', 'S'] %}
 <div id="{{ subway }}" class="col-xs-6">
     <table class="table table-condensed" style="width:100%; font-size:30px">
     <tbody id="{{ subway }}_body">
-    {% for wait in subways[subway][:4] %}
+    {% for information in subways[subway][:4] %}
         <tr>
-            <td><img height="40" src="{{ url_for('static', filename='ltrain.png') }}" alt="L Train Logo"></td>
-            <td>{{ directions[subway] }}</td>
-            <td>{{ wait }} Minutes</td>
+            <td><div class=subway-circle style="border: 2px solid {{ colors[information['route']] }}; background-color: {{ colors[information['route']] }}"><span>{{ information['route'] }}</span></div></td>
+            <td>{{ information['destination'] }}</td>
+            <td>{{ (information['remaining'] / 60)|int }} Minutes</td>
         <tr>
     {% endfor %}
     </tbody>
@@ -180,8 +221,7 @@ window.setInterval(function(){
 </div>
 
 <div id="forecast_widget">
-<iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="80%" src="{{ embed_src }}"></iframe> 
-<iframe width="15%" height="245" src="http://www.youtube.com/embed/1OHEB41yRdU?rel=0&amp;showinfo=1&amp;loop=1" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen=false></iframe>
+<iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="{{ embed_src }}"></iframe> 
 </div>
 {% if graph_intensity %}
 <div id="plotly">
@@ -190,7 +230,7 @@ window.setInterval(function(){
     <div class="fe_break" style="display:block;">
     </div>
 <div id="bottom_section">
-<table class="table table-condensed" style="width:60%; font-size:20px; float:left" id=citibike_table>
+<table class="table table-condensed" style="width:100%; font-size:20px; float:left" id=citibike_table>
 <tr>
 	<th>Nearby Stations &nbsp&nbsp<img height="15" src="{{ url_for('static', filename='citibike.jpg') }}" alt="Citibike Train Logo"></th>
 	<th>Bikes</th>
@@ -208,14 +248,6 @@ window.setInterval(function(){
 {% endfor %}
 </tbody>
 </table>
-<span id="crypto">
-    <div><img height="100" src="{{ url_for('static', filename='bitcoin.png') }}" alt="Bitcoin Logo"> 
-        <span id="bitcoin_price" style="font-size:35px"></span>
-    </div>
-    <div><img height="100" src="{{ url_for('static', filename='ethereum.png') }}" alt="Ethereum Logo">
-        <span id="ethereum_price" style="font-size:35px"></span>
-    </div>
-</span>
 </div>
 {% endif %}
 </body>
