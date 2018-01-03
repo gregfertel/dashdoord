@@ -11,7 +11,10 @@ app.logger.setLevel(logging.ERROR)
 ADDRESS = "303 Graham Avenue, Brooklyn, NY 11211"
 LATITUDE = 40.7131728
 LONGITUDE = -73.94442019999997
-with open(os.getcwd() + '/static/all_stations.json') as f:
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+json_url = os.path.join(SITE_ROOT, "static", "all_stations.json")
+
+with open(json_url) as f:
     STATION_DICTS = json.loads(f.read())['result']
 STATIONS = {x['name']: x['id'][:-1] for x in STATION_DICTS}
 
