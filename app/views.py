@@ -2,7 +2,10 @@ import json, os, sys, datetime, logging, time
 import flask
 from app import app
 import forms
-import weather, subway, subway_status, citibike
+import weather, subway, citibike
+print "importing subway status"
+import subway_status
+print "subway status imported"
 import requests
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
