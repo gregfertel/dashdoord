@@ -8,6 +8,7 @@ def get_subway_status(lines):
     url = "http://web.mta.info/status/serviceStatus.txt"
     response = requests.get(url)
     content = response.content
+    print content
     root = ElementTree.fromstring(content)
     data = []
     for line in root[2]:
