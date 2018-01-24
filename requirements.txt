@@ -28,6 +28,7 @@ pyOpenSSL==17.5.0
 pytz==2015.4
 pyzmq==14.7.0
 requests==2.7.0
+requests-cache==0.4.13
 six==1.11.0
 tornado==4.2
 Werkzeug==0.10.4

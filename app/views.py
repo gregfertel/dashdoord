@@ -2,7 +2,7 @@ import json, os, sys, datetime, logging, time
 import flask
 from app import app
 import forms
-import weather, subway, citibike
+import weather, subway, subway_status, citibike
 import requests
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -14,18 +14,15 @@ LONGITUDE = -73.94442019999997
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 json_url = os.path.join(SITE_ROOT, "static", "all_stations.json")
 
-#with open(json_url) as f:
-#with app.open_resource('static/all_stations.json') as f:
-    #STATION_DICTS = json.loads(f.read())['result']
-station_url = 'https://mtaapi.herokuapp.com/stations'
-STATION_DICTS = requests.get(station_url).json()['result']
-
-    
+with app.open_resource('static/all_stations.json') as f:
+    STATION_DICTS = json.loads(f.read())
+# station_url = 'https://mtaapi.herokuapp.com/stations'
+# STATION_DICTS = requests.get(station_url).json()['result']
 STATIONS = {x['name']: x['id'][:-1] for x in STATION_DICTS}
 
 @app.route('/_autocomplete', methods=['GET'])
 def autocomplete():
-    return flask.Response(json.dumps(STATIONS.keys()), mimetype='application/json')
+    return flask.Response(json.dumps(STATION_DICTS), mimetype='application/json')
 
 
 #@app.route('/start', methods=['GET', 'POST'])
@@ -48,6 +45,42 @@ def crypto_api():
         percent_change = x['percent_change_24h']
         prices[x['name']] = {'price': formatted_price, 'change': percent_change}
     return json.dumps(prices)
+
+@app.route('/weatherwidget')
+def weather_widget():
+    address = flask.request.args.get('address')
+    if not address:
+        address = "NEW YORK"
+    theme = flask.request.args.get('theme')
+    if theme != 'dark':
+        theme = 'pure'
+    if flask.request.args.get('size') == 'full':
+        template = "weatherwidgetfull.html"
+    else:
+        template = "weatherwidget.html"
+    theme = flask.request.args.get('theme')
+    if theme == 'dark':
+        color = '#000000'
+    else:
+        theme = 'pure'
+        color = 'rgba(255, 255, 255, 0)'
+
+    return flask.render_template(template, address=address.upper(), theme=theme)
+
+
+@app.route('/weatherwidgetfull')
+def weather_widget_full():
+    address = flask.request.args.get('address')
+    if not address:
+        address = "NEW YORK"
+    theme = flask.request.args.get('theme')
+    if theme == 'dark':
+        color = '#000000'
+    else:
+        theme = 'pure'
+        color = 'rgba(255, 255, 255, 0)'
+
+    return flask.render_template("weatherwidgetfull.html", address=address.upper(), theme=theme, color=color)
 
 """@app.route('/subway')
 def subway_api():
@@ -79,6 +112,10 @@ def subway_api(station_id=None):
             mimetype='application/json'
             )
         return response
+
+@app.route('/subway_status/<route>')
+def subway_status_view(route):
+    return json.dumps(subway_status.get_subway_status(route))
 
 @app.route('/citibike')
 def citibike_api(latitude=None, longitude=None):
@@ -129,6 +166,7 @@ def page():
     if max([minute['precipIntensity'] for minute in weather_data['minutely']]) > 0.005:
         graph_intensity = True"""
     # Get Citibike Info
+    print STATIONS[subway_choice]
     subways = json.loads(subway_api(STATIONS[subway_choice]))
     station_info = json.loads(citibike_api(latitude, longitude))
     return flask.render_template("site.html", embed_src = embed_src, 

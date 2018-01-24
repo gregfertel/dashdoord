@@ -1,0 +1,23 @@
+<html><head></head>
+{% if theme == 'dark' %}
+<body bgcolor="black">
+{% else %}
+<body>
+{% endif %}
+<a class="weatherwidget-io" href="https://forecast7.com/en/40d71n74d01/new-york/?unit=us" data-label_1="{{ address }}" data-label_2="WEATHER" data-font="Helvetica" data-icons="Climacons Animated" data-theme="{{ theme }}" data-baseColor="{{ color }}" data-accent="{{ color }}" style="width: 100%">{{ address }} WEATHER</a>
+<span class="overlay"></span>
+</body>
+</html>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://weatherwidget.io/js/widget.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","weatherwidget-io-js");
+</script>
+<style>
+.overlay {
+    background-color: rgba(255, 255, 255, 0);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+</style>
