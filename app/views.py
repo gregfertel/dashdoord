@@ -3,9 +3,7 @@ import flask
 from app import app
 import forms
 import weather, subway, citibike
-print "importing subway status"
 import subway_status
-print "subway status imported"
 import requests
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -14,18 +12,18 @@ app.logger.setLevel(logging.ERROR)
 ADDRESS = "303 Graham Avenue, Brooklyn, NY 11211"
 LATITUDE = 40.7131728
 LONGITUDE = -73.94442019999997
-SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-json_url = os.path.join(SITE_ROOT, "static", "all_stations.json")
+# SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+# json_url = os.path.join(SITE_ROOT, "static", "all_stations.json")
 
-with app.open_resource('static/all_stations.json') as f:
-    STATION_DICTS = json.loads(f.read())
+# with app.open_resource('static/all_stations.json') as f:
+#     STATION_DICTS = json.loads(f.read())
 # station_url = 'https://mtaapi.herokuapp.com/stations'
 # STATION_DICTS = requests.get(station_url).json()['result']
-STATIONS = {x['name']: x['id'][:-1] for x in STATION_DICTS}
+# STATIONS = {x['name']: x['id'][:-1] for x in STATION_DICTS}
 
-@app.route('/_autocomplete', methods=['GET'])
-def autocomplete():
-    return flask.Response(json.dumps(STATION_DICTS), mimetype='application/json')
+# @app.route('/_autocomplete', methods=['GET'])
+# def autocomplete():
+#     return flask.Response(json.dumps(STATION_DICTS), mimetype='application/json')
 
 
 #@app.route('/start', methods=['GET', 'POST'])
