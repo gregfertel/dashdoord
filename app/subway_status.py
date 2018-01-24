@@ -8,7 +8,6 @@ def get_subway_status(lines):
     url = "http://web.mta.info/status/serviceStatus.txt"
     response = requests.get(url)
     content = response.content
-    print content
     root = ElementTree.fromstring(content)
     data = []
     for line in root[2]:
@@ -24,7 +23,7 @@ def get_subway_status(lines):
             for element in soup:
                 if isinstance(element, NavigableString):
                     text_i_want.append(element)
-                elif element.name == 'b' or element.name == 'p':
+                elif element.name == 'b' or element.name == 'p' or element.name == 'strong':
                     text_i_want.append(element.text)
             final_text = "".join(text_i_want).strip()
             pattern = '\[(.*?)\]'
