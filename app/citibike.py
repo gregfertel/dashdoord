@@ -1,8 +1,12 @@
 import requests, datetime
 from geopy.distance import vincenty
+import requests_cache
+requests_cache.install_cache('my_cache', backend='memory', expire_after=180)
 
 def get_citibike_data():
-	json_data = requests.get("http://www.citibikenyc.com/stations/json").json()
+	url = "http://www.citibikenyc.com/stations/json"
+	response = requests.get(url)
+	json_data = response.json()
 	return json_data['stationBeanList']
 
 def get_citibike_availability(data, latitude, longitude):

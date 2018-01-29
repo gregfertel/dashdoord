@@ -16,7 +16,6 @@ COLORS = {
     '4': '#00933C', '5': '#00933C', '6': '#00933C', '7': '#B933AD'
 }
 
-requests_cache.install_cache('status_cache', backend='memory', expire_after=180)
 
 
 def get_realtime_subway(train, feed_id=FEED_ID, key=API_KEY):
@@ -35,41 +34,8 @@ def get_realtime_subway(train, feed_id=FEED_ID, key=API_KEY):
 def get_realtime_subway_elixir(station_id, client_id=CLIENT_ID):
     url = "http://app-ex-mta.herokuapp.com/times/%s?client_id=%s" % (station_id, client_id)
     response = requests.get(url)
-    print response.from_cache
     data = response.json()
     return json.dumps(data)
-
-def get_subway_statuses(route):
-    url = "http://web.mta.info/status/serviceStatus.txt"
-    response = requests.get(url)
-    print response.from_cache
-    content = response.content
-    root = ElementTree.fromstring(content)
-    data = []
-    for line in root[2]:
-        d = {}
-        for x in line:
-            d[x.tag] = x.text
-        data.append(d)
-        delays = {}
-    for x in data:
-        if x['status'] == 'DELAYS':
-            soup = Soup(x['text'])
-            text_i_want = []
-            for element in soup:
-                if isinstance(element, NavigableString):
-                    text_i_want.append(element)
-                elif element.name == 'b':
-                    text_i_want.append(element.text)
-            final_text = "".join(text_i_want).strip()
-            pattern = '\[(.*?)\]'
-            for line in re.findall(pattern, final_text):
-                delays[line] = final_text
-    if route in delays:
-        return delays[route]
-    else:
-        return False
-
 
 
 
