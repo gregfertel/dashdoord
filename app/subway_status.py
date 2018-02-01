@@ -40,3 +40,4 @@ def get_subway_status(lines):
             return False
     except:
         requests_cache.clear()
+        return False
