@@ -42,6 +42,7 @@ def get_subway_status(lines):
                             planned_work[line] += "\n" + work_detail.text
                         else:
                             planned_work[line] = work_detail.text
+        print planned_work
         delay_messages = set([])
         planned_work_messages = set([])
         response = {}
@@ -49,7 +50,7 @@ def get_subway_status(lines):
             if route in delays:
                 delay_messages.add(delays[route])
             if route in planned_work:
-                planned_work_messages.add(planned_work['route'])
+                planned_work_messages.add(planned_work[route])
         if delay_messages:
             response['delay_message'] = " ".join(list(delay_messages))
         if planned_work_messages:
