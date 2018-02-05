@@ -22,6 +22,8 @@ def get_subway_status(lines):
     for x in data:
         if x['status'] == 'DELAYS':
             soup = Soup(x['text'], "html5lib")
+            if len(soup) == 1:
+                soup = soup.find('body')
             text_i_want = []
             for element in soup:
                 if isinstance(element, NavigableString):
