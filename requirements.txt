@@ -12,6 +12,7 @@ gnureadline==6.3.3
 google==1.7
 gtfs-realtime-bindings==0.0.4
 gunicorn==19.7.1
+html5lib==1.0.1
 idna==2.6
 ipaddress==1.0.19
 ipython==3.2.0
