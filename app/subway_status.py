@@ -18,6 +18,7 @@ def get_subway_status(lines):
         data.append(d)
     delays = {}
     planned_work = {}
+    service_changes = {}
     pattern = '\[(.*?)\]'
     for x in data:
         if x['status'] == 'DELAYS':
@@ -44,18 +45,32 @@ def get_subway_status(lines):
                         planned_work[line] += "\n" + work_detail.text
                     else:
                         planned_work[line] = work_detail.text
+        elif x['status'] == 'SERVICE CHANGE':
+            soup = Soup(x['text'])
+            text_i_want = []
+            for element in soup.body:
+                if element.name == 'p':
+                    text_i_want.append(element.text)
+            final_text = "".join(text_i_want).strip()
+            for line in re.findall(pattern, final_text):
+                service_changes[line] = final_text
     delay_messages = set([])
     planned_work_messages = set([])
+    service_change_messages = set([])
     response = {}
     for route in lines:
         if route in delays:
             delay_messages.add(delays[route])
         if route in planned_work:
             planned_work_messages.add(planned_work[route])
+        if route in service_changes:
+            service_change_messages.add(service_changes[route])
     if delay_messages:
-        response['delay_message'] = " ".join(list(delay_messages))
+        response['delay_message'] = "\n".join(list(delay_messages))
     if planned_work_messages:
         response['planned_work_message'] = "\n".join(list(planned_work_messages))
+    if service_changes:
+        response['service_change_message'] = "\n".join(list(service_change_messages))
     if response:
         return response
     return False
