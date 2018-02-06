@@ -69,7 +69,7 @@ def get_subway_status(lines):
         response['delay_message'] = "\n".join(list(delay_messages))
     if planned_work_messages:
         response['planned_work_message'] = "\n".join(list(planned_work_messages))
-    if service_changes:
+    if service_change_messages:
         response['service_change_message'] = "\n".join(list(service_change_messages))
     if response:
         return response
