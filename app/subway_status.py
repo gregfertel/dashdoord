@@ -2,7 +2,7 @@ import requests, json, requests_cache, re
 from bs4 import BeautifulSoup as Soup, NavigableString
 from xml.etree import ElementTree
 
-requests_cache.install_cache('status_cache', backend='memory', expire_after=180)
+requests_cache.install_cache('status_cache', backend='memory', expire_after=90)
 
 def get_subway_status(lines):
     url = "http://web.mta.info/status/serviceStatus.txt"
@@ -75,5 +75,6 @@ def get_subway_status(lines):
             return response
         return False
     except:
+        print("Failed, clearing cache")
         requests_cache.clear()
         return False
