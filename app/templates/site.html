@@ -63,7 +63,13 @@ var replaceSubway = function () {
             var content = ''
             var directionData = subwayData[subway].slice(0, 4)
             for (var i = 0; i < directionData.length; i++) {
-                content += '<tr><td><div class=subway-circle style="border: 2px solid ' + subwayColors[directionData[i]['route']]+ '; background-color: ' + subwayColors[directionData[i]['route']] + ';"><span>' + directionData[i]['route'] + '</span></div></td>'
+                if (['N','Q','R'].indexOf(directionData[i]['route']) === -1) {
+                    letterColor = 'white'
+                }
+                else {
+                    letterColor = 'black'
+                }
+                content += '<tr><td><div class=subway-circle style="border: 2px solid ' + subwayColors[directionData[i]['route']]+ '; background-color: ' + subwayColors[directionData[i]['route']] + '; color: ' + letterColor + ';"><span>' + directionData[i]['route'] + '</span></div></td>'
                 content += '<td>' + directionData[i]['destination'] + '</td>'
                 content += '<td>' + parseInt(directionData[i]['remaining'] / 60) + " Minutes</td></tr>"
             }
@@ -71,6 +77,7 @@ var replaceSubway = function () {
         }
     })
 }
+replaceSubway()
 
 var updateTime = function() {
     var time = new Date();
